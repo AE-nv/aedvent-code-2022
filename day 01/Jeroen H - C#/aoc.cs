@@ -23,15 +23,5 @@ IEnumerable<IEnumerable<string>> Chunks()
         yield return chunk;
 }
 
-object Part1() => (
-    from chunk in Chunks()
-    select (
-        from line in chunk
-        let n = int.Parse(line)
-        select n).Sum()).Max();
-object Part2() => (
-    from chunk in Chunks()
-    select (
-        from line in chunk
-        let n = int.Parse(line)
-        select n).Sum()).OrderDescending().Take(3).Sum();
+int Part1() => Chunks().Select(chunk => chunk.Select(int.Parse).Sum()).Max();
+int Part2() => Chunks().Select(chunk => chunk.Select(int.Parse).Sum()).OrderDescending().Take(3).Sum();
