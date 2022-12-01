@@ -1,8 +1,6 @@
 const fs = require("fs");
 
-process();
-
-function process() {
+(() => {
     const data = fs.readFileSync("input.txt", "utf8");
     let elves = [];
     let calories = 0;
@@ -19,4 +17,4 @@ function process() {
 
     calories = elves[0] + elves[1] + elves[2];
     console.log(calories);
-}
+})();
