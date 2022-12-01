@@ -1,20 +1,18 @@
 const fs = require("fs");
 
 (() => {
-    const data = fs.readFileSync("input.txt", "utf8");
-    let elves = [];
-    let calories = 0;
+    let topCalories = [];
+    let caloriesOfElf = 0;
 
-    data.split(/\r\n/).forEach(line => {
+    fs.readFileSync("input.txt", "utf8").split(/\r\n/).forEach(line => {
         if (line === "") {
-            elves.push(calories);
-            elves.sort((a, b) => b - a);
-            calories = 0;
+            topCalories.push(caloriesOfElf);
+            topCalories.sort((a, b) => b - a);
+            caloriesOfElf = 0;
         } else {
-            calories += parseInt(line);
+            caloriesOfElf += parseInt(line);
         }
     });
 
-    calories = elves[0] + elves[1] + elves[2];
-    console.log(calories);
+    console.log(topCalories[0] + topCalories[1] + topCalories[2]);
 })();
