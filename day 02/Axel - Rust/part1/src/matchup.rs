@@ -67,3 +67,39 @@ impl Outcome {
         }
     }
 }
+
+mod outcome_tests {
+    #[test]
+    fn get_score_when_win_6() {
+        let outcome = super::Outcome::WIN;
+
+        assert_eq!(outcome.get_score(), 6);
+    }
+
+    #[test]
+    fn get_score_when_loss_0() {
+        let outcome = super::Outcome::LOSS;
+
+        assert_eq!(outcome.get_score(), 0);
+    }
+
+    #[test]
+    fn get_score_when_tie_3() {
+        let outcome = super::Outcome::TIE;
+
+        assert_eq!(outcome.get_score(), 3);
+    }
+}
+
+mod matchup_tests {
+
+    #[test]
+    fn creation_parses_string() {
+        let input = "A X";
+
+        let result = super::Matchup::new(input);
+
+        assert_eq!(result.player.get_choice(), &super::PlayerChoice::ROCK);
+        assert_eq!(result.opponent.get_choice(), &super::OpponentChoice::ROCK);
+    }
+}

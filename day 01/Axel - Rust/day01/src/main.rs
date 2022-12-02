@@ -19,7 +19,7 @@ fn main() {
 
     println!("Maximum was {}", max_calories);
 
-    let max_three = get_max_n_elements(total_calories, 3);
+    let max_three = get_max_n_elements(&total_calories, 3);
     let total_max_three: i64 = max_three.iter().sum();
     println!("maximum three was {}", total_max_three);
 }
