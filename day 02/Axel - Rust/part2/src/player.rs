@@ -3,48 +3,42 @@ use crate::opponent::Choice as OpponentChoice;
 #[derive(Debug)]
 pub(crate) struct Player {
     choice: Choice,
+    outcome: Outcome,
 }
 
 impl Player {
-    pub fn new(value: &str) -> Player {
-        let choice = Choice::from_value(value);
-        Player { choice }
-    }
-
-    pub fn from_outcome(outcome_string: &str, opponent_choice: OpponentChoice) {
+    pub fn new(outcome_string: &str, opponent_choice: &OpponentChoice) -> Player {
         let outcome = Outcome::from_value(outcome_string);
+        let choice = Self::get_choice(opponent_choice, &outcome);
+
+        Player { choice, outcome }
     }
 
-    pub fn get_choice(&self) -> &Choice {
-        &self.choice
+    fn get_choice(opponent_choice: &OpponentChoice, outcome: &Outcome) -> Choice {
+        match opponent_choice {
+            OpponentChoice::ROCK => match outcome {
+                Outcome::WIN => Choice::PAPER,
+                Outcome::LOSS => Choice::SCISSORS,
+                Outcome::TIE => Choice::ROCK,
+            },
+            OpponentChoice::PAPER => match outcome {
+                Outcome::WIN => Choice::SCISSORS,
+                Outcome::LOSS => Choice::ROCK,
+                Outcome::TIE => Choice::PAPER,
+            },
+            OpponentChoice::SCISSORS => match outcome {
+                Outcome::WIN => Choice::ROCK,
+                Outcome::LOSS => Choice::PAPER,
+                Outcome::TIE => Choice::SCISSORS,
+            },
+        }
     }
 
     pub fn get_score(&self) -> i32 {
-        self.choice.get_score()
-    }
+        let choice_score = self.choice.get_score();
+        let outcome_score = self.outcome.get_score();
 
-    fn get_outcome(&self, opponent_choice: OpponentChoice) -> Outcome {
-        let player_choice = self.get_choice();
-
-        match player_choice {
-            Choice::ROCK => match opponent_choice {
-                OpponentChoice::ROCK => Outcome::TIE,
-                OpponentChoice::PAPER => Outcome::LOSS,
-                OpponentChoice::SCISSORS => Outcome::WIN,
-            },
-
-            Choice::PAPER => match opponent_choice {
-                OpponentChoice::ROCK => Outcome::WIN,
-                OpponentChoice::PAPER => Outcome::TIE,
-                OpponentChoice::SCISSORS => Outcome::LOSS,
-            },
-
-            Choice::SCISSORS => match opponent_choice {
-                OpponentChoice::ROCK => Outcome::LOSS,
-                OpponentChoice::PAPER => Outcome::WIN,
-                OpponentChoice::SCISSORS => Outcome::TIE,
-            },
-        }
+        choice_score + outcome_score
     }
 }
 
@@ -56,15 +50,6 @@ pub enum Choice {
 }
 
 impl Choice {
-    fn from_value(value: &str) -> Choice {
-        match value {
-            "X" => Choice::ROCK,
-            "Y" => Choice::PAPER,
-            "Z" => Choice::SCISSORS,
-            _ => panic!("Invalid enum value {}", value),
-        }
-    }
-
     fn get_score(&self) -> i32 {
         match *self {
             Self::ROCK => 1,
@@ -73,6 +58,8 @@ impl Choice {
         }
     }
 }
+
+#[derive(Debug)]
 
 enum Outcome {
     WIN,
@@ -87,6 +74,14 @@ impl Outcome {
             "Y" => Outcome::TIE,
             "Z" => Outcome::WIN,
             _ => panic!("Invalid enum value {}", value),
+        }
+    }
+
+    fn get_score(&self) -> i32 {
+        match *self {
+            Self::WIN => 6,
+            Self::LOSS => 0,
+            Self::TIE => 3,
         }
     }
 }

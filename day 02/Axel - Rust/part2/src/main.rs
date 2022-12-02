@@ -8,7 +8,7 @@ mod player;
 mod util;
 
 fn main() {
-    let lines = read_all_lines("./test_input.txt");
+    let lines = read_all_lines("./input.txt");
 
     let game = Game::new(lines);
     let score = game.get_score();
