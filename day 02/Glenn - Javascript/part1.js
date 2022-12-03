@@ -31,10 +31,4 @@ const fs = require("fs");
             return yourValue; // lose
         }
     }
-
-    1
-    2
-    3
-
-
 })();

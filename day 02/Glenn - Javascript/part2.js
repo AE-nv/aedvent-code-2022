@@ -55,6 +55,4 @@ const fs = require("fs");
 
         return score + outcomeValue;
     }
-
-
 })();
