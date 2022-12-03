@@ -29,3 +29,7 @@ print(result)
 
 # oneliner part 1
 print(sum("0abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".index([y for y in x[:i]if y in x[i:]][0])for x,i in([l.strip(),int((len(l)-1)/2)] for l in open('input.txt').readlines())))
+
+# even shorter and part 2, with inspiration from Xavier
+print(sum(ord(z)-(38,96)[z.islower()]for z in([y for y in x[:i]if y in x[i:]][0]for x,i in([l.strip(),int((len(l)-1)/2)]for l in open('input.txt').readlines()))))
+print(sum(ord(z)-(38,96)[z.islower()]for z in[''.join(set(a)&set(b)&set(c)).strip()for a,b,c in[[l[i:i+3]for i in range(0,len(l),3)]for l in [open('input.txt').readlines()]][0]]))
