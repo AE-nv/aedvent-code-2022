@@ -17,5 +17,5 @@ for [[c,d],[e,f]] in numbers:
 print(result2)
 
 # oneliners
-print(sum([(g.issubset(h)or h.issubset(g))for[g,h]in[[set(range(c,d+1)),set(range(e,f+1))]for[[c,d],[e,f]]in[[[int(i)for i in a.split('-')],[int(i)for i in b.split('-')]]for[a,b]in[l.strip().split(',')for l in open('input.txt').readlines()]]]]))
+print(sum([(g.issubset(h)or h.issubset(g))for[g,h]in[[set(range(int(c),int(d)+1)),set(range(int(e),int(f)+1))]for[[c,d],[e,f]]in[[a.split('-'),b.split('-')]for[a,b]in[l.strip().split(',')for l in open('input.txt').readlines()]]]]))
 print(sum([1for[[g,h],[i,j]]in[[a.split('-'),b.split('-')]for[a,b]in[l.strip().split(',')for l in open('input.txt').readlines()]]if len(set(range(int(g),int(h)+1))&set(range(int(i),int(j)+1))) > 0]))
