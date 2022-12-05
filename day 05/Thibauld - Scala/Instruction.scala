@@ -1,0 +1,1 @@
+case class Instruction(amount: Int, fromStack: Int, toStack: Int)
