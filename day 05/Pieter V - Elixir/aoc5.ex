@@ -55,9 +55,26 @@ defmodule Aoc5 do
 
     end
 
+    def move_blocks(machine_state,size,from,to)do
+        %{:blocks => fromBlocks, :bucket => fromBucket} = Enum.find(machine_state, fn %{:bucket => b, :blocks => _} -> b == from end)
+        %{:blocks => toBlocks, :bucket => toBucket} = Enum.find(machine_state, fn %{:bucket => b, :blocks => _} -> b == to end)
+        blocksToMove = Enum.take(fromBlocks,size)
+        blocksToKeepInFromRow = Enum.drop(fromBlocks,size)
+        newFromRow = %{:blocks => blocksToKeepInFromRow, :bucket => fromBucket}
+        newToRow =  %{:blocks => blocksToMove ++ toBlocks, :bucket => toBucket}
+        machine_state
+        |> Enum.map(&(replace_bucket_conditionally(&1,newFromRow)))
+        |> Enum.map(&(replace_bucket_conditionally(&1,newToRow)))
+    end
+
     def apply_command_to_machine(machine_state, %{:from => f, :move => m, :to => t}) do
          Integer.parse(m)
         |> Kernel.then(fn {num,_} -> Enum.reduce(1..num,machine_state,fn(_n,state) ->  move_block(state, f,t) end) end)
+    end
+
+    def apply_command_to_new_machine(machine_state, %{:from => f, :move => m, :to => t}) do
+        Integer.parse(m)
+        |> Kernel.then(fn {num,_} -> move_blocks(machine_state,num,f,t)end)
     end
 
     def strip_brackets(block)do
@@ -78,9 +95,20 @@ defmodule Aoc5 do
         |> Enum.map(&strip_brackets/1)
         |> Enum.join("")
     end
-    def aoc_5_2(input) do end
+    def aoc_5_2(input) do
+        input
+        |> String.split("\r\n\r\n")
+        |> Kernel.then(fn [machine_state, commands] -> %{:ms => parse_machine_state(machine_state), :c => parse_commands(commands)} end)
+        |> Kernel.then(fn %{:ms => machine_state, :c => commands} ->
+            Enum.reduce(commands, machine_state, fn (command,acc) -> apply_command_to_new_machine(acc,command)
+                end)
+            end)
+        |> Enum.map(fn %{:blocks => [h|_]} -> h end)
+        |> Enum.map(&strip_brackets/1)
+        |> Enum.join("")
+    end
 end
 
 {:ok,contents} = File.read("C:/Users/Pieter.Verlinden/Documents/AE Studio/advent of code/aoc/aoc5.input.txt")
 IO.puts(Aoc5.aoc_5_1(contents))
-#IO.puts(Aoc5.aoc_5_2(contents))
+IO.puts(Aoc5.aoc_5_2(contents))
