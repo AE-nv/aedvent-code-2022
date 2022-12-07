@@ -1,60 +1,43 @@
 const fs = require("fs");
 
 (() => {
-    let score = 0;
+    let sum = 0;
+
+    let index = 1;
+    let groups = [];
+    let group = [];
 
     fs.readFileSync("input.txt", "utf8").split(/\r\n/).forEach(line => {
-
         if (line) {
-            const [opponentsChoice, desiredOutcome] = line.split(" ");
+            group.push(line);
 
-            const opponentsValue = opponentsChoice.charCodeAt(0) - 64;
-            const outcomeValue = getOutcomeValue(desiredOutcome);
-
-            score += getScore(opponentsValue, outcomeValue);
+            if (index % 3 === 0) {
+                groups.push(group);
+                group = [];
+            }
+            index++;
         }
     });
 
-    console.log(score);
+    groups.forEach(group => {
+        const groupArray = [];
+        group.forEach(g => groupArray.push([...g.split("")]));
+        const uniqueCommon = findUniqueCommonItems(groupArray);
 
-    function getOutcomeValue(val) {
-        if (val === "X") {
-            return 0;
-        } else if (val === "Y") {
-            return 3
-        } else {
-            return 6;
-        }
+        if (uniqueCommon.length) {
+             const priority = uniqueCommon[0].toLowerCase() === uniqueCommon[0] ? uniqueCommon[0].charCodeAt(0) - 96 : uniqueCommon[0].charCodeAt(0) - 38;
+             sum += parseInt(priority);
+         }
+    });
+
+    console.log(sum);
+
+    function findUniqueCommonItems(arrays) {
+        return arrays.shift().reduce(function (res, v) {
+            if (res.indexOf(v) === -1 && arrays.every(function (a) {
+                return a.indexOf(v) !== -1;
+            })) res.push(v);
+            return res;
+        }, []);
     }
-
-    function getScore(opponentsValue, outcomeValue) {
-        /* Rock = 1, Paper = 2, Scissors = 3
-            2 wins from 1: diff = 1
-            3 wins from 2: diff = 1
-            1 wins from 3: diff = -2
-         */
-        let score;
-
-        if (outcomeValue === 3) {
-            score = opponentsValue; // draw
-        } else if (outcomeValue === 6) {
-            // win
-            if (opponentsValue === 1 || opponentsValue === 2) {
-                score = opponentsValue + 1;
-            } else if(opponentsValue === 3) {
-                score = 1;
-            }
-        } else {
-            // lose
-            if (opponentsValue === 2 || opponentsValue === 3) {
-                score = opponentsValue - 1;
-            } else if(opponentsValue === 1) {
-                score = 3;
-            }
-        }
-
-        return score + outcomeValue;
-    }
-
-
 })();
