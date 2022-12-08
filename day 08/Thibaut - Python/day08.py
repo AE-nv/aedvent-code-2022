@@ -13,34 +13,35 @@ if __name__ == '__main__':
     with open("day08.txt", 'r') as f:
         data = f.readlines()
 
-    input = np.array([[int(c) for c in r.strip()] for r in data])
-    print(input)
+    forest = np.array([[int(c) for c in r.strip()] for r in data])
+    print(forest)
 
     visible_trees = []
     scores = {}
     for x in range(1, len(data) - 1):
         for y in range(1, len(data[0].strip()) - 1):
+            current_tree = forest[x, y]
             obstructions = 0
             score = 1
 
-            left = input[x, :y]
-            score *= get_viewing_score(list(reversed(left)), input[x, y])
-            if max(left) >= input[x, y]:
+            left = forest[x, :y]
+            score *= get_viewing_score(list(reversed(left)), current_tree)
+            if max(left) >= current_tree:
                 obstructions += 1
 
-            up = input[:x, y]
-            score *= get_viewing_score(list(reversed(up)), input[x, y])
-            if max(up) >= input[x, y]:
+            up = forest[:x, y]
+            score *= get_viewing_score(list(reversed(up)), current_tree)
+            if max(up) >= current_tree:
                 obstructions += 1
 
-            down = input[x + 1:, y]
-            score *= get_viewing_score(down, input[x, y])
-            if max(down) >= input[x, y]:
+            down = forest[x + 1:, y]
+            score *= get_viewing_score(down, current_tree)
+            if max(down) >= current_tree:
                 obstructions += 1
 
-            right = input[x, y + 1:]
-            score *= get_viewing_score(right, input[x,y])
-            if max(right) >= input[x, y]:
+            right = forest[x, y + 1:]
+            score *= get_viewing_score(right, current_tree)
+            if max(right) >= current_tree:
                 obstructions += 1
 
             if obstructions < 4:
