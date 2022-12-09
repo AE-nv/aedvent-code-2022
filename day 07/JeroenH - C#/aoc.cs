@@ -3,20 +3,19 @@ var input = System.IO.File.ReadAllLines("input.txt");
 var Root = Directory.Parse(input);
 
 var sw = Stopwatch.StartNew();
-var part1 = Part1();
-var part2 = Part2();
-Console.WriteLine((part1, part2, sw.Elapsed));
 
-long Part1() => (
+var part1 = (
     from d in Root.AllChildren()
     where d.Size < 100000
     select d.Size).Sum();
 
-long Part2() => (
+var part2 = (
     from d in Root.AllChildren()
     where d.Size >= (Root.Size - 40000000)
     orderby d.Size
     select d).First().Size;
+
+Console.WriteLine((part1, part2, sw.Elapsed));
 
 abstract class FileSystemEntry
 {
@@ -31,7 +30,6 @@ partial class Directory : FileSystemEntry
     private Directory(string name, Directory? parent) : base(name) => Parent = parent;
 
     static Regex FileRegex = CreateFileRegex();
-
     static Regex DirectoryRegex = CreateDirectoryRegex();
 
     public static Directory Parse(IEnumerable<string> input)
@@ -57,18 +55,15 @@ partial class Directory : FileSystemEntry
 
     public IEnumerable<Directory> AllChildren()
     {
-        foreach (var child in Children.OfType<Directory>())
-        {
-            foreach (var d in child.AllChildren())
-                yield return d;
-        }
-
+        var q = from c in Children.OfType<Directory>()
+                from d in c.AllChildren()
+                select d;
+        foreach (var item in q)
+            yield return item;
         yield return this;
     }
 
-
     public Directory? Parent { get; }
-
     public override long Size => Children.Sum(f => f.Size);
 
     public Directory AddFile(string name, long size)
@@ -93,7 +88,6 @@ partial class Directory : FileSystemEntry
 
     [GeneratedRegex("^(?<size>\\d+) (?<name>.+)$", RegexOptions.Compiled)]
     private static partial Regex CreateFileRegex();
-
     [GeneratedRegex("^dir (?<name>.+)$", RegexOptions.Compiled)]
     private static partial Regex CreateDirectoryRegex();
 }
@@ -101,8 +95,6 @@ partial class Directory : FileSystemEntry
 class File : FileSystemEntry
 {
     public File(string name, long size) : base(name) => Size = size;
-
     public override long Size { get; }
-
     public override string ToString() => $"{Size} {Name}";
 }
