@@ -15,7 +15,7 @@ object Day09 {
 
   def run(instructions: List[String], ropeLength: Int = 2): Int = {
     val rope = createRope(ropeLength)
-    val tailPositions = mutable.HashSet[(Int, Int)](rope.last)
+    val tailPositions = mutable.HashSet[Position](rope.last)
 
     instructions.map(parseInstruction).foreach((numSteps, direction) => {
       (1 to numSteps).foreach(_ => {
