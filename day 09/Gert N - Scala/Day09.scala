@@ -11,15 +11,15 @@ object Day09 {
 
   type Position = (Int, Int)
   type Rope = Array[Position]
-  type Step = (Int, Int)
+  type Direction = (Int, Int)
 
-  def run(input: List[String], ropeLength: Int = 2): Int = {
+  def run(instructions: List[String], ropeLength: Int = 2): Int = {
     val rope = createRope(ropeLength)
     val tailPositions = mutable.HashSet[(Int, Int)](rope.last)
 
-    input.map(parse).foreach((step, num) => {
-      (1 to num).foreach(_ => {
-        moveHead(rope, step)
+    instructions.map(parseInstruction).foreach((numSteps, direction) => {
+      (1 to numSteps).foreach(_ => {
+        moveRope(rope, direction)
         tailPositions.add(rope.last)
       })
     })
@@ -31,16 +31,14 @@ object Day09 {
     (1 to ropeLength).map(_ => (0, 0)).toArray
   }
 
-  def moveHead(rope: Rope, step: Step): Rope = {
-    rope.update(0, move(rope(0), step))
+  def moveRope(rope: Rope, step: Direction) = {
+    rope.update(0, move(rope.head, step))
 
     for (i <- 1 until rope.length)
       rope.update(i, moveTowards(rope(i), rope(i - 1)))
-
-    rope
   }
 
-  def move(position: Position, step: Step): Position = {
+  def move(position: Position, step: Direction): Position = {
     (position._1 + step._1, position._2 + step._2)
   }
 
@@ -55,12 +53,12 @@ object Day09 {
       if (Math.abs(yDistance) > 1) a._2 - yDistance / 2 else b._2)
   }
 
-  def parse(instruction: String): (Step, Int) = {
+  def parseInstruction(instruction: String): (Int, Direction) = {
     val split = instruction.split(" ")
-    (determineStep(split.head), split.last.toInt)
+    (split.last.toInt, parseDirection(split.head))
   }
 
-  def determineStep(direction: String): Step = {
+  def parseDirection(direction: String): Direction = {
     direction match
       case "R" => (1, 0)
       case "L" => (-1, 0)
