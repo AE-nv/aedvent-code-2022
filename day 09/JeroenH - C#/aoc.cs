@@ -7,10 +7,12 @@ var movements =
     let l = int.Parse(line[2..])
     from n in Repeat(1, l)
     select d;
+
 var sw = Stopwatch.StartNew();
 var part1 = Part1();
 var part2 = Part2();
 Console.WriteLine((part1, part2, sw.Elapsed));
+
 int Part1()
 {
     Point h = new(), t = new();
