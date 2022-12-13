@@ -9,6 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Using Include="Newtonsoft.Json" />
+    <Using Include="Newtonsoft.Json.Linq"/>
     <Using Include="Microsoft.FSharp.Collections" />
     <Using Include="System.Diagnostics" />
     <Using Include="System.Reflection" />
