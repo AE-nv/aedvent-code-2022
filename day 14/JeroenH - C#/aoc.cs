@@ -10,7 +10,12 @@ Grid Parse(IEnumerable<string> input, int part)
     var tiles =
         from l in input
         from pair in (
-            from item in l.Split(" -> ") let pair = item.Split(',') let x = int.Parse(pair[0]) let y = int.Parse(pair[1]) select new Point(x, y)).Windowed2()
+            from item in l.Split(" -> ") 
+            let pair = item.Split(',') 
+            let x = int.Parse(pair[0]) 
+            let y = int.Parse(pair[1]) 
+            select new Point(x, y)
+            ).Windowed2()
         let line = Line.From(pair.a, pair.b)
         from p in line.Points()
         select p;
