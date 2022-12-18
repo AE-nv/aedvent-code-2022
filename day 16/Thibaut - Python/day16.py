@@ -1,6 +1,7 @@
 import pprint
 from copy import deepcopy
 from functools import cache
+from collections import defaultdict
 
 def get_current_flow(valves):
     return sum([flow_rate for flow_rate, _, opened in valves.values() if opened])
@@ -82,6 +83,25 @@ def get_optimal_flow_using_advanced_valves(advanced_valves, total_time = 30, sta
                 best_flow=total_score
     return best_flow
 
+def get_paths_using_advanced_valves(advanced_valves, total_time = 30, start="AA"):
+    frontier = [(start, total_time, 0, [])]
+
+    paths = []
+    while len(frontier)>0:
+        # print(len(frontier))
+        location, time_left, score, open_valves = frontier.pop()
+        current_flow = sum([valves[v][0] for v in open_valves])
+        frontier_expanded=False
+        for next_valve, (distance, _) in advanced_valves[location][1].items():
+            flow = current_flow*(distance+1) #+1 to also count the time it takes to open the next valve
+            if distance < time_left and next_valve not in open_valves:
+                frontier.append((next_valve, time_left-(distance+1), score+flow, open_valves+[next_valve]))
+                frontier_expanded=True
+        if not frontier_expanded:
+            total_score = score+current_flow*time_left
+            paths.append((total_score, open_valves))
+    return paths
+
 
     # hop to valve that can be reached in the time that is left
     # take time to reach valve and multiply by current_flow, add to score for frontier point
@@ -109,7 +129,7 @@ def get_optimal_flow_using_elephant(advanced_valves, valves_of_interest, start =
 
     best_flow = 0
     while len(frontier)>0:
-        # print(len(frontier))
+        print(len(frontier))
         (me, elephant), time_left, score, open_valves = frontier.pop()
         current_flow = sum([valves[v][0] for v in open_valves])
         frontier_expanded = False
@@ -231,8 +251,27 @@ if __name__ == '__main__':
     flow = get_optimal_flow_using_advanced_valves(advanced_valves)
     print("PART 1: "+str(flow))
 
-    flow = get_optimal_flow_using_elephant(advanced_valves, valves_of_interest)
-    print("PART 2:" + str(flow))
+    # PART 2: alternative -
+    # * generate all possible paths along with the pressure they generate over their trajectory
+    # * iterate over all combinations of paths that don't overlap in the valves they open
+    # * sum pressure of the two unique paths
+
+    possible_paths = get_paths_using_advanced_valves(advanced_valves, total_time=26)
+    best_paths = defaultdict(lambda:(0, []))
+    for score, path in possible_paths:
+        key = str(sorted(path))
+        if best_paths[key][0]<score:
+            best_paths[key] = (score, path)
+
+    possible_paths = best_paths.values()
+
+    best_score=0
+    for score1, path1 in possible_paths:
+        for score2, path2 in possible_paths:
+            if len(set(path1).intersection(path2))==0:
+                if score1+score2>best_score:
+                    best_score = score1+score2
+    print("PART 2: " + str(best_score))
 
     #PART 2: keep history for two individuals
     #alter advanced valves to keep shortest path as well
@@ -240,3 +279,6 @@ if __name__ == '__main__':
     #iterate over possible next valves that are not in each others history
     #   add points to frontier for individual one visiting a node and individual two visiting a node
     #count time upwards from 0, add pressure to calculation once the history adds up to the time
+
+    # flow = get_optimal_flow_using_elephant(advanced_valves, valves_of_interest)
+    # print("PART 2:" + str(flow))
